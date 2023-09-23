@@ -6,12 +6,12 @@
     "configurations": [
         {
             "type": "node",
-            "request": "launch",
-            "name": "Iniciar o Programa",
+            "request": "attach",
+            "restart": true,
+            "name": "Debug",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/src/routes/index.ts",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]
