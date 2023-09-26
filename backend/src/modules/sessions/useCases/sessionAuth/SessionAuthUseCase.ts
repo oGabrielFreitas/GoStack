@@ -1,13 +1,12 @@
 import { prisma_client } from "../../../../prisma/PrismaClient";
-import { UserAuthDTO } from "../../dtos/UserAuthDTO";
+import { SessionAuthDTO } from "../../dtos/SessionAuthDTO";
 import { compare } from "bcryptjs"
 import { sign } from "jsonwebtoken"
 import { AuthResponseDTO } from "../../dtos/AuthResponseDTO";
-import { User } from "@prisma/client";
 
 
-export class UserAuthUseCase {
-  async execute({ email , password }: UserAuthDTO): Promise<AuthResponseDTO> {
+export class SessionAuthUseCase {
+  async execute({ email , password }: SessionAuthDTO): Promise<AuthResponseDTO> {
 
     //Verificar se o email já existe
 
