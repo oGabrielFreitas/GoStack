@@ -11,16 +11,19 @@ datasource db {
 }
 
 model User {
-  id         String      @id @default(uuid())
-  email      String      @unique
-  name       String
-  password   String
-  create_at  DateTime    @default(now())
-  updated_at DateTime    @updatedAt
-  MovieRent  MovieRent[]
+  id             String           @id @default(uuid())
+  email          String           @unique
+  name           String
+  password       String
+  create_at      DateTime         @default(now())
+  updated_at     DateTime         @updatedAt
+  MovieRent      MovieRent[]
+  UplodadedFiles UplodadedFiles[]
 
   @@map("users") // Renomeia a table para users, dentro do banco
 }
+
+// ----------------------------------------------------------
 
 model Movie {
   id           String      @id @default(uuid())
@@ -42,4 +45,17 @@ model MovieRent {
 
   // Mescla os dois Ids, para criar um id relacional para a classe MovieRent
   @@id([userId, movieId])
+}
+
+// ----------------------------------------------------------
+
+// Upload de Imagens
+model UplodadedFiles {
+  id          String   @id @default(uuid())
+  userOwner   User     @relation(fields: [userOwnerId], references: [id])
+  userOwnerId String
+  create_at   DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("uploaded_files")
 }

@@ -5,7 +5,7 @@ export class FileUploadedController {
   async handle(req: Request, res: Response){
     const {file_name } = req.body;
 
-    console.log(req.user)
+    console.log(req.file)
 
     const fileUploader = new FileUploadUseCase();
 
