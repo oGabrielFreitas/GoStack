@@ -1,9 +1,25 @@
 import { FileUploadDTO } from "../../dtos/FileUploadDTO";
 import { FileUploadedResponseDTO } from "../../dtos/FileUploadedResponseDTO"
 
-export class FileUploadUseCase {
+import fs from "fs"; // FileSystem, nativo do NodeJS
 
-  async execute({file_name, file_type, file_size }: FileUploadDTO): Promise<FileUploadedResponseDTO> {
+class FileUploadUseCase {
+
+
+  // ---------------------------------------------------------------------
+
+
+
+
+
+  async execute({ file }: FileUploadDTO): Promise<FileUploadedResponseDTO> {
+
+    console.log(file)
+
+
+
+    // COlocar a função aqui
+
 
     const response = {
     file_status: 'Success',
@@ -14,3 +30,15 @@ export class FileUploadUseCase {
 
   }
 }
+
+export { FileUploadUseCase }
+
+
+
+    // // LER PDF PRO STREAM? APRIMORAR DEPOIS
+    // const stream = fs.createReadStream(file.path);
+    // const data = fs.readFileSync(file.path);
+    // console.log(data)
+    // // res.contentType("application/pdf");
+    // // res.send(data);
+    // // stream.pipe()
