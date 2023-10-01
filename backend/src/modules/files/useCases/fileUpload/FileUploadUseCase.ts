@@ -3,14 +3,13 @@ import { FileUploadedResponseDTO } from "../../dtos/FileUploadedResponseDTO"
 
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 
-import { Chroma } from "langchain/vectorstores/chroma";
-import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { TextLoader } from "langchain/document_loaders/fs/text";
-
-
-import fs from "fs"; // FileSystem, nativo do NodeJS
-import { llmOpenAI, embeddingsOpenAI } from "../../../../config/OpenAIConfig";
+import { RetrievalQAChain } from "langchain/chains";
 import { VectorStoreDocumentService } from "../../../../services/VectorStoreDocumentService";
+import { llmModel } from "../../../../config/OpenAIConfig";
+import { OpenAI } from "langchain/llms/openai";
+
+import { Document } from "langchain/document";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 
 class FileUploadUseCase {
 
@@ -24,31 +23,51 @@ class FileUploadUseCase {
 
     const docs = await loader.load();
 
-    const texts = docs.map(doc => doc.pageContent);
-
-    // const embedded_docs = await embeddings.embedDocuments(texts);
-
-
-    // Load the docs into the vector store
-
     const vectorStoreService = new VectorStoreDocumentService();
 
-    await vectorStoreService.save(docs, "./teste")
-
-    const vectorStore = await vectorStoreService.load("./teste")
+    const vectorStore = await vectorStoreService.save(docs, "./teste")
 
 
     // Search for the most similar document
-    const retriever = await vectorStore.similaritySearch("Quem pode expedir certificados de cursos de Pós-Graduação?", 2);
-    console.log(retriever);
+    // const retriever = await vectorStore.similaritySearch("Quem pode expedir certificados de cursos de Pós-Graduação?", 2);
+    // console.log(retriever);
 
+    // const llm = new OpenAI({0});
+
+
+    // Initialize a retriever wrapper around the vector store
+    // const vectorStoreRetriever = vectorStore.asRetriever(2);
+
+    const chain = RetrievalQAChain.fromLLM(llmModel, vectorStore.asRetriever(2), {
+      returnSourceDocuments: true, // Can also be passed into the constructor
+    });
+
+    // Create a chain that uses the OpenAI LLM and HNSWLib vector store.
+    // const chain = RetrievalQAChain.fromLLM(llmModel, vectorStoreRetriever);
+    const res = await chain.call({
+      query: "Quem pode expedir certificados de cursos de Pós-Graduação?",
+      // query: "Sobre qual instituição estamos falando?",
+
+
+    });
+    console.log({ res });
+    /*
+    {
+      res: {
+        text: 'The president said that Justice Breyer was an Army veteran, Constitutional scholar,
+        and retiring Justice of the United States Supreme Court and thanked him for his service.'
+      }
+    }
+    */
 
 
     const response = {
     file_status: 'Success',
     // doc: docs,
     // output: embedded_docs,
-    sources: retriever
+    // sources: retriever
+    // res: res,
+    // chain: chain
     }
 
     return response
