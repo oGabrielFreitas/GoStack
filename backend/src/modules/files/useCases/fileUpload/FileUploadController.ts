@@ -1,22 +1,22 @@
-import { Request, Response } from "express";
-import { FileUploadUseCase } from "./FileUploadUseCase";
+import { type Request, type Response } from 'express'
+import { FileUploadUseCase } from './FileUploadUseCase'
 
 class FileUploadedController {
+  async handle(request: Request, response: Response): Promise<Response> {
+    const { file } = request
 
-  async handle(request: Request, response: Response){
+    const fileUploader = new FileUploadUseCase()
 
-    const { file } = request;
-
-    const fileUploader = new FileUploadUseCase();
-
-    try{
-      const upload = await fileUploader.execute({file});
-
-      return response.status(200).json(upload)
-    }catch(err){
-      return response.status(400).json({message: err.message})
+    if (!file) {
+      return response.status(400).json({ message: 'File is missing' })
     }
 
+    try {
+      await fileUploader.execute({ file })
+      return response.status(200)
+    } catch (err) {
+      return response.status(400).json({ message: err.message })
+    }
   }
 }
 

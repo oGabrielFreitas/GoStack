@@ -1,16 +1,18 @@
-import { Router } from "express";
-import { CreateUserController } from "../modules/users/useCases/createUser/CreateUserController";
+import { Router } from 'express'
+import { CreateUserController } from '../modules/users/useCases/createUser/CreateUserController'
 
 // Router
-const userRouter = Router();
+const userRouter = Router()
 
 // Controllers
-const createUserController = new CreateUserController();
+const createUserController = new CreateUserController()
 
 // Consts
 // Middlewares
 
 // Routes
-userRouter.post("/", createUserController.handle)
+userRouter.post('/', async (request, response) =>
+  createUserController.handle(request, response),
+)
 
-export { userRouter };
+export { userRouter }

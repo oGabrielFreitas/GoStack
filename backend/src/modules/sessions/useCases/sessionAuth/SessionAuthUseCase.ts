@@ -1,34 +1,32 @@
-import { prisma_client } from "../../../../prisma/PrismaClient";
-import { SessionAuthDTO } from "../../dtos/SessionAuthDTO";
-import { compare } from "bcryptjs"
-import { sign } from "jsonwebtoken"
-import { AuthResponseDTO } from "../../dtos/AuthResponseDTO";
-import authConfig from "../../../../config/AuthConfig"
-
+import { MyPrismaClient } from '../../../../config/PrismaClientConfig'
+import { SessionAuthDTO } from '../../dtos/SessionAuthDTO'
+import { compare } from 'bcryptjs'
+import { sign } from 'jsonwebtoken'
+import { AuthResponseDTO } from '../../dtos/AuthResponseDTO'
+import authConfig from '../../../../config/AuthConfig'
 
 export class SessionAuthUseCase {
-  async execute({ email , password }: SessionAuthDTO): Promise<AuthResponseDTO> {
-
-    //Verificar se o email já existe
+  async execute({ email, password }: SessionAuthDTO): Promise<AuthResponseDTO> {
+    // Verificar se o email já existe
 
     // Busca usuário no banco de dados
-    const userSearched = await prisma_client.user.findUnique({
+    const userSearched = await MyPrismaClient.user.findUnique({
       where: {
-        email
-      }
+        email,
+      },
     })
 
-    if (!userSearched){
-      throw new Error("Wrong e-mail or password.")
+    if (!userSearched) {
+      throw new Error('Wrong e-mail or password.')
     }
 
     // Comparando a senha
 
     const passwordMatched = await compare(password, userSearched.password)
 
-    if (!passwordMatched){
-      throw new Error("Wrong e-mail or password.")    }
-
+    if (!passwordMatched) {
+      throw new Error('Wrong e-mail or password.')
+    }
 
     // Se tudo certo, ele irá retorar o usuário e o token JWT
 
@@ -43,14 +41,16 @@ export class SessionAuthUseCase {
     const token = sign({}, authConfig.jwt.secret, {
       subject: userSearched.id,
       expiresIn: authConfig.jwt.expiresIn,
-    });
+    })
 
-    delete userSearched.password // Apagamos a hash de senha do json
+    // delete userSearched.password // Apagamos a hash de senha do json
 
     return {
       token,
-      user: userSearched,
+      user: {
+        name: userSearched.name,
+        email: userSearched.email,
+      },
     }
-
   }
 }

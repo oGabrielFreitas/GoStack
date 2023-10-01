@@ -1,8 +1,9 @@
-import { User } from "@prisma/client";
+import { User } from '@prisma/client'
 
-export interface AuthResponseDTO{
-
+export interface AuthResponseDTO {
   token: string
-  user: User
-
+  user: {
+    name: User['name']
+    email: User['email']
+  }
 }
