@@ -13,10 +13,10 @@ const fileUploadController = new FileUploadedController()
 const fileRetrivealQAController = new FileRetrivealQAController()
 
 // Consts
-const upload = multer(UploadConfig)
+const upload = multer(UploadConfig) // Inicia a biblioteca Multer
 
 // Middlewares
-filesRouter.use(ensureAuthenticated)
+// filesRouter.use(ensureAuthenticated) // Verifica se o usuário está autenticado
 
 // Routes
 filesRouter.post(

@@ -44,16 +44,14 @@ class FileRetrivealQAUseCase {
       combineDocumentsChain: loadQAStuffChain(llmModel, { prompt }),
       retriever: vectorStore.asRetriever(2),
       returnSourceDocuments: false,
-      verbose: true,
+      verbose: false,
     })
-
-    console.log(chain)
 
     const chainAnswer = await chain.call({
       query,
     })
 
-    const { text } = chainAnswer.text
+    const { text } = chainAnswer
 
     return {
       answer: text,
